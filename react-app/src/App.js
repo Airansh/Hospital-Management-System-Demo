@@ -1,5 +1,7 @@
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
 
+import './App.css'
+
 import SignUp from './modules/Authentication/SignUp';
 import Login from './modules/Authentication/Login';
 

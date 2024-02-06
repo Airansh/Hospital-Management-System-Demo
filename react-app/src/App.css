@@ -1,0 +1,10 @@
+body {
+    background-color: #f2f2f2; /* Light grey color */
+    margin: 0; /* Remove default margin */
+    font-family: Arial, sans-serif; /* Set a default font family if needed */
+  }
+  
+  .app-container {
+    text-align: center; /* Center the content horizontally */
+    padding: 20px;
+  }
