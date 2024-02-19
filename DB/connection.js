@@ -1,12 +1,16 @@
-const mysql = require('mysql2');
-const createConnection = mysql.createConnection;
-const db = createConnection(
-    {
-        host: 'localhost',
-        user: 'root',
-        password: '1234',
-        database: 'login_cred'
-    },
-    console.log('connected to user database')
-)
-export default db;
+import mysql from 'mysql2';
+
+// Replace these with your actual credentials
+const host = 'localhost';
+const user = 'root';
+const password = '1515';
+const database = 'softwarearchitecture';
+
+export const db = mysql.createConnection({
+  host,
+  user,
+  password,
+  database,
+});
+
+console.log('Connected to user database');

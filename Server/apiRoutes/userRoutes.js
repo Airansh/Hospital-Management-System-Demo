@@ -1,9 +1,9 @@
 import express from 'express';
-router = express.Router();
-const db = require('../../DB/connection');
+export const userRouter = express.Router();
+import {db} from '../../DB/connection.js';
 
 // Create a new user
-router.post('/users', async (req, res) => {
+userRouter.post('/users', async (req, res) => {
   const { username, password, role, email_id, security_ans1, security_ans2 } = req.body;
   try {
     const [results] = await db.query(
@@ -18,7 +18,7 @@ router.post('/users', async (req, res) => {
 });
 
 // Get all users
-router.get('/users', async (req, res) => {
+userRouter.get('/users', async (req, res) => {
   try {
     const [results] = await db.query('SELECT * FROM `login_cred`');
     res.json(results);
@@ -29,7 +29,7 @@ router.get('/users', async (req, res) => {
 });
 
 // Get a specific user by username
-router.get('/users/:username', async (req, res) => {
+userRouter.get('/users/:username', async (req, res) => {
   const { username } = req.params;
   try {
     const [results] = await db.query('SELECT * FROM `login_cred` WHERE username = ?', [username]);
@@ -45,7 +45,7 @@ router.get('/users/:username', async (req, res) => {
 });
 
 // Update a user by username
-router.put('/users/:username', async (req, res) => {
+userRouter.put('/users/:username', async (req, res) => {
   const { username } = req.params;
   const { password, role, email_id, security_ans1, security_ans2 } = req.body;
   try {
@@ -65,7 +65,7 @@ router.put('/users/:username', async (req, res) => {
 });
 
 // Delete a user by username
-router.delete('/users/:username', async (req, res) => {
+userRouter.delete('/users/:username', async (req, res) => {
   const { username } = req.params;
   try {
     const [results] = await db.query('DELETE FROM `login_cred` WHERE username = ?', [username]);
@@ -81,7 +81,7 @@ router.delete('/users/:username', async (req, res) => {
 });
 
 // Sign-in route
-router.post('/signin', async (req, res) => {
+userRouter.post('/signin', async (req, res) => {
   const { username, password } = req.body;
   try {
     const [results] = await db.query('SELECT * FROM `login_cred` WHERE username = ? AND password = ?', [username, password]);
@@ -96,4 +96,4 @@ router.post('/signin', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default userRouter;
