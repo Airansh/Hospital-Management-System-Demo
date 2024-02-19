@@ -1,15 +1,24 @@
 import express from 'express';
 export const userRouter = express.Router();
+import bcrypt from 'bcrypt'
 import {db} from '../../DB/connection.js';
 
 // Create a new user
 userRouter.post('/users', async (req, res) => {
   const { username, password, role, email_id, security_ans1, security_ans2 } = req.body;
   try {
-    const [results] = await db.query(
+    // Generate a salt for password hashing
+    const salt = await bcrypt.genSalt(10);
+
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Insert user data with hashed password
+    const [results] = db.query(
       'INSERT INTO `login_cred` (username, password, role, email_id, security_ans1, security_ans2) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, password, role, email_id, security_ans1, security_ans2]
+      [username, hashedPassword, role, email_id, security_ans1, security_ans2]
     );
+
     res.json({ message: 'User created successfully', userId: results.insertId });
   } catch (error) {
     console.error(error);
@@ -20,7 +29,7 @@ userRouter.post('/users', async (req, res) => {
 // Get all users
 userRouter.get('/users', async (req, res) => {
   try {
-    const [results] = await db.query('SELECT * FROM `login_cred`');
+    const [results] = db.query('SELECT * FROM `login_cred`');
     res.json(results);
   } catch (error) {
     console.error(error);
@@ -32,7 +41,7 @@ userRouter.get('/users', async (req, res) => {
 userRouter.get('/users/:username', async (req, res) => {
   const { username } = req.params;
   try {
-    const [results] = await db.query('SELECT * FROM `login_cred` WHERE username = ?', [username]);
+    const [results] = db.query('SELECT * FROM `login_cred` WHERE username = ?', [username]);
     if (results.length > 0) {
       res.json(results[0]);
     } else {
@@ -49,7 +58,7 @@ userRouter.put('/users/:username', async (req, res) => {
   const { username } = req.params;
   const { password, role, email_id, security_ans1, security_ans2 } = req.body;
   try {
-    const [results] = await db.query(
+    const [results] = db.query(
       'UPDATE `login_cred` SET password = ?, role = ?, email_id = ?, security_ans1 = ?, security_ans2 = ? WHERE username = ?',
       [password, role, email_id, security_ans1, security_ans2, username]
     );
@@ -68,7 +77,7 @@ userRouter.put('/users/:username', async (req, res) => {
 userRouter.delete('/users/:username', async (req, res) => {
   const { username } = req.params;
   try {
-    const [results] = await db.query('DELETE FROM `login_cred` WHERE username = ?', [username]);
+    const [results] = db.query('DELETE FROM `login_cred` WHERE username = ?', [username]);
     if (results.affectedRows > 0) {
       res.json({ message: 'User deleted successfully' });
     } else {
@@ -83,11 +92,24 @@ userRouter.delete('/users/:username', async (req, res) => {
 // Sign-in route
 userRouter.post('/signin', async (req, res) => {
   const { username, password } = req.body;
+
   try {
-    const [results] = await db.query('SELECT * FROM `login_cred` WHERE username = ? AND password = ?', [username, password]);
-    if (results.length > 0) {
+    // Find user by username
+    const [results] = db.query('SELECT * FROM `login_cred` WHERE username = ?', [username]);
+
+    if (results.length === 0) {
+      // User not found
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Compare hashed password with provided password
+    const isMatch = await bcrypt.compare(password, results[0].password);
+
+    if (isMatch) {
+      // Sign-in successful
       res.json({ message: 'Sign-in successful', user: results[0] });
     } else {
+      // Invalid password
       res.status(401).json({ error: 'Invalid credentials' });
     }
   } catch (error) {
