@@ -1,121 +1,82 @@
 import express from 'express';
 export const userRouter = express.Router();
+import session from 'express-session';
 import bcrypt from 'bcrypt'
 import {db} from '../../DB/connection.js';
 
-// Create a new user
-userRouter.post('/users', async (req, res) => {
-  const { username, password, role, email_id, security_ans1, security_ans2 } = req.body;
-  try {
-    // Generate a salt for password hashing
-    const salt = await bcrypt.genSalt(10);
+// Middleware for session management
+userRouter.use(session({
+  secret: 'your-secret-key', // Change this to a secret key
+  resave: false,
+  saveUninitialized: true,
+}));
 
-    // Hash the password using bcrypt
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Insert user data with hashed password
-    const [results] = db.query(
-      'INSERT INTO `login_cred` (username, password, role, email_id, security_ans1, security_ans2) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, hashedPassword, role, email_id, security_ans1, security_ans2]
-    );
-
-    res.json({ message: 'User created successfully', userId: results.insertId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Get all users
-userRouter.get('/users', async (req, res) => {
-  try {
-    const [results] = db.query('SELECT * FROM `login_cred`');
-    res.json(results);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Get a specific user by username
-userRouter.get('/users/:username', async (req, res) => {
-  const { username } = req.params;
-  try {
-    const [results] = db.query('SELECT * FROM `login_cred` WHERE username = ?', [username]);
-    if (results.length > 0) {
-      res.json(results[0]);
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Update a user by username
-userRouter.put('/users/:username', async (req, res) => {
-  const { username } = req.params;
-  const { password, role, email_id, security_ans1, security_ans2 } = req.body;
-  try {
-    const [results] = db.query(
-      'UPDATE `login_cred` SET password = ?, role = ?, email_id = ?, security_ans1 = ?, security_ans2 = ? WHERE username = ?',
-      [password, role, email_id, security_ans1, security_ans2, username]
-    );
-    if (results.affectedRows > 0) {
-      res.json({ message: 'User updated successfully' });
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Delete a user by username
-userRouter.delete('/users/:username', async (req, res) => {
-  const { username } = req.params;
-  try {
-    const [results] = db.query('DELETE FROM `login_cred` WHERE username = ?', [username]);
-    if (results.affectedRows > 0) {
-      res.json({ message: 'User deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Sign-in route
-userRouter.post('/signin', async (req, res) => {
+// Login route
+// Login route
+userRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Find user by username
-    const [results] = db.query('SELECT * FROM `login_cred` WHERE username = ?', [username]);
+    // Check if user exists
+    const [rows] = await db.execute('SELECT * FROM login_cred WHERE username = ?', [username]);
 
-    if (results.length === 0) {
-      // User not found
-      return res.status(401).json({ error: 'Invalid credentials' });
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    // Compare hashed password with provided password
-    const isMatch = await bcrypt.compare(password, results[0].password);
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, rows[0].password);
 
-    if (isMatch) {
-      // Sign-in successful
-      res.json({ message: 'Sign-in successful', user: results[0] });
-    } else {
-      // Invalid password
-      res.status(401).json({ error: 'Invalid credentials' });
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
+
+    // Store user information in session
+    req.session.user = rows[0];
+
+    res.json({ message: 'Login successful', user: rows[0] });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+// Signup route
+userRouter.post('/signup', async (req, res) => {
+  const { username, password, role, email_id, security_ans1, security_ans2 } = req.body;
+
+  try {
+    // Hash the password before storing in the database
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert user into the database using promise-based query
+    await db.execute('INSERT INTO login_cred (username, password, role, email_id, security_ans1, security_ans2) VALUES (?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, role, email_id, security_ans1, security_ans2]);
+
+    res.json({ message: 'Signup successful' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Password reset route
+userRouter.post('/reset-password', async (req, res) => {
+  const { username, newPassword } = req.body;
+
+  try {
+    // Hash the new password before updating in the database
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the database using promise-based query
+    await db.execute('UPDATE login_cred SET password = ? WHERE username = ?', [hashedPassword, username]);
+
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 export default userRouter;

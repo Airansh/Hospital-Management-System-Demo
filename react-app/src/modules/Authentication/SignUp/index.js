@@ -26,10 +26,24 @@ function SignUp() {
     setAns1(e.target.value)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add login logic here
-    createAccount(email, password, 'patient', email, ans1, ans2)
+    const userData ={
+        username: email,
+        password: password,
+        role: 'patient',
+        email_id: email,
+        security_ans1: ans1,
+        security_ans2: ans2
+    }
+    try {
+        const createAccountData = await createAccount(userData)
+        //handle signup
+        console.log(createAccountData)
+    } catch(error){
+        console.log(error)
+        //handle create account error
+    }
   };
 
   return (

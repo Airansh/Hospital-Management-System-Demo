@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./styles/loginStyles.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { signIn } from "../../../api/auth";
+import { loginUser } from "../../../api/auth";
 
 function Login() {
   const nav = useNavigate();
@@ -21,10 +21,15 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add login logic here
-    signIn(email, password)
+    try{
+      const loginData = await loginUser(email, password)
+      console.log(loginData)
+    } catch(error){
+      console.log(error)
+    }
   };
 
   return (
