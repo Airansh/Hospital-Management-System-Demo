@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "test:ci": "jest --config ./jest.config.js --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --watchAll=false"
+  },
+  "devDependencies": {
+    "jest-junit": "^16.0.0"
+  }
+}
