@@ -62,21 +62,25 @@ userRouter.post('/signup', async (req, res) => {
 
 // Password reset route
 userRouter.post('/reset-password', async (req, res) => {
-  const { username, newPassword } = req.body;
+  const { username, ans1, newPassword } = req.body;
 
   try {
     // Hash the new password before updating in the database
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the password in the database using promise-based query
-    await db.execute('UPDATE login_cred SET password = ? WHERE username = ?', [hashedPassword, username]);
-
-    res.json({ message: 'Password reset successful' });
+    const updated = await db.execute('UPDATE login_cred SET password = ? WHERE username = ? AND security_ans1 = ?', [hashedPassword, username, ans1]);
+    if(updated.affectedRows === 0){
+      res.status(404);
+    }
+    else{
+      res.json({ message: 'Password reset successful' });
+    }
+    
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 
 export default userRouter;

@@ -18,6 +18,7 @@ export const loginUser = async (username, password) => {
     console.error('Error:', error);
     throw new Error('Login failed');
   }
+
 };
 
 export const createAccount = async (userData) => {
@@ -40,7 +41,7 @@ export const createAccount = async (userData) => {
   }
 };
 
-export const resetPassword = async (username, newPassword) => {
+export const resetPassword = async (username, ans1, newPassword) => {
   const resetPasswordUrl = `${apiUrl}/reset-password`;
 
   try {
@@ -49,7 +50,7 @@ export const resetPassword = async (username, newPassword) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, newPassword }),
+      body: JSON.stringify({ username, ans1, newPassword }),
     });
 
     const data = await response.json();
