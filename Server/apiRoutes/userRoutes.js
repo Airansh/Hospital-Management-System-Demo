@@ -3,6 +3,7 @@ export const userRouter = express.Router();
 import session from 'express-session';
 import bcrypt from 'bcrypt'
 import {db} from '../../DB/connection.js';
+import { login_query, signup_query, forgotPassword_query } from './queries.js';
 
 // Middleware for session management
 userRouter.use(session({
@@ -18,7 +19,7 @@ userRouter.post('/login', async (req, res) => {
 
   try {
     // Check if user exists
-    const [rows] = await db.execute('SELECT * FROM login_cred WHERE username = ?', [username]);
+    const [rows] = await db.execute(login_query, [username]);
 
     if (rows.length === 0) {
       return res.status(401).json({ message: 'Invalid username or password' });
@@ -50,7 +51,7 @@ userRouter.post('/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user into the database using promise-based query
-    await db.execute('INSERT INTO login_cred (username, password, role, email_id, security_ans1, security_ans2) VALUES (?, ?, ?, ?, ?, ?)',
+    await db.execute(signup_query,
       [username, hashedPassword, role, email_id, security_ans1, security_ans2]);
 
     res.json({ message: 'Signup successful' });
@@ -69,7 +70,7 @@ userRouter.post('/reset-password', async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the password in the database using promise-based query
-    const updated = await db.execute('UPDATE login_cred SET password = ? WHERE username = ? AND security_ans1 = ?', [hashedPassword, username, ans1]);
+    const updated = await db.execute(forgotPassword_query, [hashedPassword, username, ans1]);
     if(updated.affectedRows === 0){
       res.status(404);
     }

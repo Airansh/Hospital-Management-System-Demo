@@ -91,7 +91,7 @@ function SignUp() {
       <div className="signup-link">
         <p>
           Already Have an Account?{" "}
-          <button onClick={() => nav('/login')}>Sign up</button>
+          <button onClick={() => nav('/login')}>Login</button>
         </p>
       </div>
     </>
