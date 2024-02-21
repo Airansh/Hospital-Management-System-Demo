@@ -3,7 +3,7 @@ import mysql from 'mysql2/promise';
 // Replace these with your actual credentials
 const host = 'localhost';
 const user = 'root';
-const password = 'password';
+const password = '1515';
 const database = 'softwarearchitecture';
 
 export const db = mysql.createPool({

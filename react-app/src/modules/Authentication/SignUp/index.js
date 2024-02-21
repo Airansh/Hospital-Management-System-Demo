@@ -63,7 +63,7 @@ function SignUp() {
         </label>
         <br />
         <label>
-          What is the year you were born in?
+          What year were you born in?
           <input
             value={ans1}
             onChange={handleQuestion1Change}

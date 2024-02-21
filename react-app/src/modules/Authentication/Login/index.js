@@ -63,7 +63,10 @@ function Login() {
           </div>
         </label>
         <br />
-        <button type="submit">Login</button>
+        <div className="button-container">
+          <button type="submit">Login</button>
+          <button type="button" onClick={() => nav('/forgotpassword')}>Forgot Password</button> 
+        </div>
       </form>
       <div className="signup-link">
         <p>

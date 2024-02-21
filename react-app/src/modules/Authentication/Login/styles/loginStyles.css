@@ -66,3 +66,8 @@
   .signup-link p {
     margin: 0;
   }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+  }
