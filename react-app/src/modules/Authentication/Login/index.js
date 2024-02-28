@@ -23,10 +23,15 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add login logic here
     try{
       const loginData = await loginUser(email, password)
-      console.log(loginData)
+      if (loginData['message'] === 'Invalid username or password'){
+        alert('Invalid username or password')  
+      }
+      else {
+        //Impliment login logic
+      }
+
     } catch(error){
       console.log(error)
     }

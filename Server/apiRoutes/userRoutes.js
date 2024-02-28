@@ -13,7 +13,6 @@ userRouter.use(session({
 }));
 
 // Login route
-// Login route
 userRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
