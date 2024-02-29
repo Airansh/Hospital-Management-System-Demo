@@ -18,7 +18,14 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       const forgot = await resetPassword(email, ans1, newPassword);
-      console.log(forgot);
+      if (forgot['message'] === 'Password reset successful'){
+        alert('Password Reset Successfull')
+        navigate('/login')
+      } else {
+        console.log(forgot);
+        alert(forgot['message'])
+      }
+
       // Redirect or show success message
     } catch (error) {
       console.error('Error resetting password:', error);

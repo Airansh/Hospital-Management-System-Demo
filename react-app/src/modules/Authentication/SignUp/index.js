@@ -39,10 +39,16 @@ function SignUp() {
     try {
         const createAccountData = await createAccount(userData)
         //handle signup
-        console.log(createAccountData)
+        if (createAccountData['message'] === 'Internal server error') {
+          alert('User already exisits or server error')
+        } else {
+          console.log(createAccountData)
+          alert('Account created successfully')
+          nav('/login')
+        }
     } catch(error){
         console.log(error)
-        //handle create account error
+        alert(error)
     }
   };
 

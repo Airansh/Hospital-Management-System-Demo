@@ -30,6 +30,9 @@ function Login() {
       }
       else {
         //Impliment login logic
+        console.log(loginData)
+        let role = loginData['user']['role']
+        console.log(role)
       }
 
     } catch(error){

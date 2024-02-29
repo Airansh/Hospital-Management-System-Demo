@@ -79,6 +79,7 @@ userRouter.post('/reset-password', async (req, res) => {
     
   } catch (error) {
     console.error('Error:', error);
+    alert(error)
     res.status(500).json({ message: 'Internal server error' });
   }
 });
