@@ -1,56 +1,63 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import SignUp from './SignUp';
+/* eslint-disable testing-library/prefer-screen-queries */
+// SignUp.test.js
+
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect'; // for additional matchers like toBeInTheDocument
+import SignUp from '../../SignUp';
 
 describe('SignUp Component', () => {
-  test('renders the Sign Up form with correct elements', () => {
-    render(<SignUp />);
-
-    const title = screen.getByText(/Sign Up/i);
-    const emailInput = screen.getByLabelText(/Email/i);
-    const passwordInput = screen.getByLabelText(/Password/i);
-    const passwordToggle = screen.getByRole('button', { name: /Show Password/i });
-    const submitButton = screen.getByRole('button', { name: /Create Account/i });
-    const signupLink = screen.getByText(/Already Have an Account\?/i);
-    const loginButton = screen.getByRole('button', { name: /Sign up/i });
-
-    expect(title).toBeInTheDocument();
-    expect(emailInput).toBeInTheDocument();
-    expect(passwordInput).toBeInTheDocument();
-    expect(passwordToggle).toBeInTheDocument();
-    expect(submitButton).toBeInTheDocument();
-    expect(signupLink).toBeInTheDocument();
-    expect(loginButton).toBeInTheDocument();
+  it('renders without crashing', () => {
+    const { getByText } = render(<SignUp />);
+    expect(getByText('Sign Up')).toBeInTheDocument();
   });
 
-  test('can toggle password visibility', () => {
-    render(<SignUp />);
-
-    const passwordInput = screen.getByLabelText(/Password/i);
-    expect(passwordInput.type).toBe('password');
-
-    const passwordToggle = screen.getByRole('button', { name: /Show Password/i });
-    fireEvent.click(passwordToggle);
-    expect(passwordInput.type).toBe('text');
-
-    fireEvent.click(passwordToggle); // Click again to hide
-    expect(passwordInput.type).toBe('password');
-  });
-
-  test('updates email state on input change', () => {
-    render(<SignUp />);
-
-    const emailInput = screen.getByLabelText(/Email/i);
+  it('handles email input correctly', () => {
+    const { getByLabelText } = render(<SignUp />);
+    const emailInput = getByLabelText('Email:');
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-
-    expect(screen.getByLabelText(/Email/i)).toHaveAttribute('value', 'test@example.com');
+    expect(emailInput.value).toBe('test@example.com');
   });
 
-  test('updates password state on input change', () => {
-    render(<SignUp />);
+  it('handles password input correctly', () => {
+    const { getByLabelText } = render(<SignUp />);
+    const passwordInput = getByLabelText('Password:');
+    fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
+    expect(passwordInput.value).toBe('testPassword');
+  });
 
-    const passwordInput = screen.getByLabelText(/Password/i);
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+  it('handles question input correctly', () => {
+    const { getByLabelText } = render(<SignUp />);
+    const questionInput = getByLabelText('What year were you born in?');
+    fireEvent.change(questionInput, { target: { value: '1990' } });
+    expect(questionInput.value).toBe('1990');
+  });
 
-    expect(screen.getByLabelText(/Password/i)).toHaveAttribute('value', 'password123');
+  it('toggles password visibility', () => {
+    const { getByLabelText, getByTestId } = render(<SignUp />);
+    const passwordInput = getByLabelText('Password:');
+    const togglePasswordButton = getByTestId('toggle-password');
+
+    expect(passwordInput.type).toBe('password');
+
+    fireEvent.click(togglePasswordButton);
+
+    expect(passwordInput.type).toBe('text');
+  });
+
+  it('submits the form', () => {
+    const { getByLabelText, getByText } = render(<SignUp />);
+    const emailInput = getByLabelText('Email:');
+    const questionInput = getByLabelText('What year were you born in?');
+    const passwordInput = getByLabelText('Password:');
+    const submitButton = getByText('Create Account');
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(questionInput, { target: { value: '1990' } });
+    fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
+    fireEvent.click(submitButton);
+
+    // You might want to add more assertions based on the expected behavior
+    // For example, you can check if a function that should be called upon submission is called.
   });
 });

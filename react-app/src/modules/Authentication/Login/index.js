@@ -3,12 +3,14 @@ import "./styles/loginStyles.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../../api/auth";
+import { setIsLoggedIn, setRole } from "../../../store";
 
 function Login() {
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -17,26 +19,26 @@ function Login() {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
+
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const loginData = await loginUser(email, password)
-      if (loginData['message'] === 'Invalid username or password'){
-        alert('Invalid username or password')  
+    try {
+      const loginData = await loginUser(email, password);
+      if (loginData.message === "Invalid username or password") {
+        alert("Invalid username or password");
+      } else {
+        setIsLoggedIn(true)
+        setRole(loginData.user.role)
+        if(loginData.user.role === 'patient') {
+          nav('/patient')
+        }  
       }
-      else {
-        //Impliment login logic
-        console.log(loginData)
-        let role = loginData['user']['role']
-        console.log(role)
-      }
-
-    } catch(error){
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -73,13 +75,15 @@ function Login() {
         <br />
         <div className="button-container">
           <button type="submit">Login</button>
-          <button type="button" onClick={() => nav('/forgotpassword')}>Forgot Password</button> 
+          <button type="button" onClick={() => nav("/forgotpassword")}>
+            Forgot Password
+          </button>
         </div>
       </form>
       <div className="signup-link">
         <p>
           Don't have an account?{" "}
-          <button onClick={() => nav('/signup')}>Sign up</button>
+          <button onClick={() => nav("/signup")}>Sign up</button>
         </p>
       </div>
     </>
