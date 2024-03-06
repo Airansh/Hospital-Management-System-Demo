@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate, Navigate} from 'react-router-dom';
-import { getIsLoggedIn, getRole } from '../store';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const isAuthenticated = getIsLoggedIn(); // Replace with your authentication logic
-  const userRole = getRole(); // Replace with your logic to retrieve user role
+  const isAuthenticated = sessionStorage.getItem('isLoggedIn'); 
+  const userRole = sessionStorage.getItem('role');
   const navigate= useNavigate()
 
   useEffect(() => {

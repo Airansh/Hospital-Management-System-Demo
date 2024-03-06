@@ -1,11 +1,9 @@
 import { useState } from "react";
-import "./styles/loginStyles.css";
+import "./styles/signupStyles.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { createAccount } from "../../../api/auth";
 
 function SignUp() {
-  const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [ans1, setAns1] = useState('')
   const [ans2, setAns2] = useState('')
@@ -44,7 +42,7 @@ function SignUp() {
         } else {
           console.log(createAccountData)
           alert('Account created successfully')
-          nav('/login')
+          window.location.href = '/login';
         }
     } catch(error){
         console.log(error)
@@ -97,7 +95,7 @@ function SignUp() {
       <div className="signup-link">
         <p>
           Already Have an Account?{" "}
-          <button onClick={() => nav('/login')}>Login</button>
+          <a className="redirect" type='button' href="login">Login</a>
         </p>
       </div>
     </>

@@ -37,6 +37,17 @@
   button:hover {
     background-color: #45a049;
   }
+  .redirect {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .redirect:hover {
+    background-color: #45a049;
+  }
   
   .password-label {
     position: relative;

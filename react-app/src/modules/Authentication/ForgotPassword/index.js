@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { resetPassword } from "../../../api/auth";
 
 function ForgotPassword() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [ans1, setAns1] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -20,7 +18,7 @@ function ForgotPassword() {
       const forgot = await resetPassword(email, ans1, newPassword);
       if (forgot['message'] === 'Password reset successful'){
         alert('Password Reset Successfull')
-        navigate('/login')
+        window.location.href = '/login';
       } else {
         console.log(forgot);
         alert(forgot['message'])
@@ -69,7 +67,7 @@ function ForgotPassword() {
       <div className="signup-link">
         <p>
           Remembered your password?{" "}
-          <button onClick={() => navigate('/login')}>Login</button>
+          <a className="redirect" type="button" href="login">Login</a>
         </p>
       </div>
     </>

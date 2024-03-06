@@ -1,15 +1,17 @@
+// Import necessary libraries and functions for testing
+import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import SignUp from '../index';
+import '@testing-library/jest-dom/extend-expect'; // for additional matchers like toBeInTheDocument
+import Login from '../../Login';
 
-describe('SignUp Component', () => {
+describe('Login Component', () => {
   beforeEach(() => {
     // eslint-disable-next-line testing-library/no-render-in-setup
-    render(<SignUp />);
+    render(<Login />);
   });
 
   it('renders without crashing', () => {
-    expect(screen.getByText('Sign Up')).toBeInTheDocument();
+    expect(screen.getByText('Login Here')).toBeInTheDocument();
   });
 
   it('renders email input', () => {
@@ -17,36 +19,20 @@ describe('SignUp Component', () => {
     expect(emailInput).toBeInTheDocument();
   });
 
-  it('renders question input', () => {
-    const questionInput = screen.getByLabelText('What year were you born in?');
-    expect(questionInput).toBeInTheDocument();
-  });
-
   it('renders password input', () => {
     const passwordInput = screen.getByLabelText('Password:');
     expect(passwordInput).toBeInTheDocument();
   });
 
-  it('renders submit button', () => {
-    const submitButton = screen.getByText('Create Account');
-    expect(submitButton).toBeInTheDocument();
-  });
-
-  it('renders login link', () => {
-    const loginLink = screen.getByText('Already Have an Account?');
-    expect(loginLink).toBeInTheDocument();
+  it('renders forgot password link', () => {
+    const forgotPasswordLink = screen.getByText('Forgot Password');
+    expect(forgotPasswordLink).toBeInTheDocument();
   });
 
   it('handles email input correctly', () => {
     const emailInput = screen.getByLabelText('Email:');
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     expect(emailInput.value).toBe('test@example.com');
-  });
-
-  it('handles question input correctly', () => {
-    const questionInput = screen.getByLabelText('What year were you born in?');
-    fireEvent.change(questionInput, { target: { value: '1990' } });
-    expect(questionInput.value).toBe('1990');
   });
 
   it('handles password input correctly', () => {

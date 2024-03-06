@@ -1,12 +1,9 @@
 import { useState } from "react";
 import "./styles/loginStyles.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../../api/auth";
-import { setIsLoggedIn, setRole } from "../../../store";
 
 function Login() {
-  const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,10 +28,10 @@ function Login() {
       if (loginData.message === "Invalid username or password") {
         alert("Invalid username or password");
       } else {
-        setIsLoggedIn(true)
-        setRole(loginData.user.role)
+        sessionStorage.setItem('isLoggedIn', true)
+        sessionStorage.setItem('role',loginData.user.role)
         if(loginData.user.role === 'patient') {
-          nav('/patient')
+          window.location.href = '/patient';
         }  
       }
     } catch (error) {
@@ -45,7 +42,7 @@ function Login() {
   return (
     <>
       <div className="title">
-        <h1>Login</h1>
+        <h1>Login Here</h1>
       </div>
       <form className="login-form" onSubmit={handleSubmit}>
         <label>
@@ -75,15 +72,15 @@ function Login() {
         <br />
         <div className="button-container">
           <button type="submit">Login</button>
-          <button type="button" onClick={() => nav("/forgotpassword")}>
+          <a className="redirect" type="button" href="/forgotpassword">
             Forgot Password
-          </button>
+          </a>
         </div>
       </form>
       <div className="signup-link">
         <p>
           Don't have an account?{" "}
-          <button onClick={() => nav("/signup")}>Sign up</button>
+          <a className="redirect" type="button" href="signup">Sign up</a>
         </p>
       </div>
     </>
