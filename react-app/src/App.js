@@ -6,6 +6,7 @@ import './App.css';
 import SignUp from './modules/Authentication/SignUp';
 import Login from './modules/Authentication/Login';
 import ForgotPassword from './modules/Authentication/ForgotPassword';
+import MedcareApp from './modules/LandingPage';
 
 // Protected routes component
 import ProtectedRoute from './authentication_rules/protected_routes';
@@ -18,7 +19,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Unprotected routes */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<MedcareApp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
