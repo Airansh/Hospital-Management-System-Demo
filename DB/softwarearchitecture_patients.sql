@@ -1,5 +1,3 @@
--- DATABASE LAYER
-
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: softwarearchitecture
@@ -18,33 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `login_cred`
+-- Table structure for table `patients`
 --
 
-DROP TABLE IF EXISTS `login_cred`;
+DROP TABLE IF EXISTS `patients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `login_cred` (
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(50) NOT NULL DEFAULT 'patient',
-  `email_id` varchar(255) NOT NULL,
-  `security_ans1` varchar(255) NOT NULL,
-  `security_ans2` varchar(255) NOT NULL,
-  PRIMARY KEY (`username`),
-  UNIQUE KEY `email_id_UNIQUE` (`email_id`),
-  CONSTRAINT `role_constraint` CHECK (((`role` = _utf8mb4'patient') or (`role` = _utf8mb4'provider') or (`role` = _utf8mb4'admin')))
+CREATE TABLE `patients` (
+  `pattient_id` varchar(255) NOT NULL,
+  `department` varchar(100) DEFAULT NULL,
+  `contact` varchar(100) DEFAULT NULL,
+  `health_concerns` varchar(255) DEFAULT NULL,
+  `primary_physician` varchar(100) DEFAULT NULL,
+  `admission_status` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`pattient_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `login_cred`
+-- Dumping data for table `patients`
 --
 
-LOCK TABLES `login_cred` WRITE;
-/*!40000 ALTER TABLE `login_cred` DISABLE KEYS */;
-INSERT INTO `login_cred` VALUES ('ved','password','admin','email@email.com','ans1','ans2'),('ved2','password','provider','email2@email.com','ans1','ans2'),('ved3','password','patient','email3@email.com','ans1','ans2'),('ved4','password','patient','email4@email.com','ans1','ans2'),('vedairen@gmail.com','$2b$10$L5epdqprFDTpzlkA.HxLgus4yhOKZLfPj01BierUGUHeVMRarezka','patient','vedairen@gmail.com','2024',''),('vedairen@xyz.com','$2b$10$zpOdE/Nef8exRrwywDvBaOEoLK3ggpK8yCj8LCZUT6OsQT4j6tu1W','patient','vedairen@xyz.com','2024','');
-/*!40000 ALTER TABLE `login_cred` ENABLE KEYS */;
+LOCK TABLES `patients` WRITE;
+/*!40000 ALTER TABLE `patients` DISABLE KEYS */;
+/*!40000 ALTER TABLE `patients` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
