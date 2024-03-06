@@ -1,6 +1,10 @@
+// CONNECTION LAYER
+
 import mysql from 'mysql2/promise';
 
 // Replace these with your actual credentials
+
+// HOSTING LAYER: LOCALHOST
 const host = 'localhost';
 const user = 'root';
 const password = '1515';

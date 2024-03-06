@@ -23,9 +23,14 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // ERROR HANDLING LAYER : Wrong email and/or password
     try {
       const loginData = await loginUser(email, password);
+      
       if (loginData.message === "Invalid username or password") {
+      
+        // MESSAGE LAYER
+      
         alert("Invalid username or password");
       } else {
         sessionStorage.setItem('isLoggedIn', true)

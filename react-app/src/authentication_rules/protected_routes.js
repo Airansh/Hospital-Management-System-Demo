@@ -1,8 +1,12 @@
+// BUSINESS RULES
+
 import { useEffect } from 'react';
 import { useNavigate, Navigate} from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = sessionStorage.getItem('isLoggedIn'); 
+
+// SECURITY LAYER : access as per role of user
   const userRole = sessionStorage.getItem('role');
   const navigate= useNavigate()
 

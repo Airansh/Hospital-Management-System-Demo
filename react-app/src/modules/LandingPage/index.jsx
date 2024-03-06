@@ -1,3 +1,5 @@
+// PERSISTENCE LAYER : importing locally stored images
+
 import React, { useState } from 'react';
 import './MedcareApp.css'; 
 import OIG2 from './Assets/OIG2.jpg';
