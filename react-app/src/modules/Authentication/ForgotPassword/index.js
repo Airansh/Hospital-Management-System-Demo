@@ -20,8 +20,8 @@ function ForgotPassword() {
         alert('Password Reset Successfull')
         window.location.href = '/login';
       } else {
+        alert('Wrong Email id or Security Answer!')
         console.log(forgot);
-        alert(forgot['message'])
       }
 
       // Redirect or show success message

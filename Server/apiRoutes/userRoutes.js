@@ -72,10 +72,12 @@ userRouter.post('/reset-password', async (req, res) => {
 
     // Update the password in the database using promise-based query
     const updated = await db.execute(forgotPassword_query, [hashedPassword, username, ans1]);
-    if(updated.affectedRows === 0){
-      res.status(404);
+    if(updated[0].affectedRows === 0){
+      console.log(updated[0].affectedRows)
+      res.json({ message: 'Wrong Email id or Security Answer!' });
     }
     else{
+      console.log(updated[0].affectedRows)
       res.json({ message: 'Password reset successful' });
     }
     
