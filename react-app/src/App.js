@@ -26,9 +26,15 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/patient" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
+        {/* 404 Error route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
+}
+
+function NotFound() {
+  return <h1>Page Not Found</h1>;
 }
 
 export default App;
