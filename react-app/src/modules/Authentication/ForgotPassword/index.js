@@ -26,7 +26,7 @@ function ForgotPassword() {
 
       // Redirect or show success message
     } catch (error) {
-      console.error('Error resetting password:', error);
+      alert('Error resetting password:', error);
       // Handle error - Redirect or show error message
     }
   };

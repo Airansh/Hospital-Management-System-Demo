@@ -16,6 +16,7 @@ export const loginUser = async (username, password) => {
     return data;
   } catch (error) {
     console.error('Error:', error);
+    alert(error + ' :Server is currently down.')
     throw new Error('Login failed');
   }
 
@@ -37,7 +38,7 @@ export const createAccount = async (userData) => {
     return data;
   } catch (error) {
     console.error('Error:', error);
-    console.alert(error)
+    alert(error + ' :Server is currently down')
     throw new Error('Signup failed');
   }
 };
@@ -58,7 +59,7 @@ export const resetPassword = async (username, ans1, newPassword) => {
     return data;
   } catch (error) {
     console.error('Error:', error);
-    console.alert(error)
+    alert(error + ' :Server is currently down')
     throw new Error('Password reset failed');
   }
 };
