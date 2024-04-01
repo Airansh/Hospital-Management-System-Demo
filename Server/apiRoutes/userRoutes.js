@@ -7,6 +7,11 @@ import bcrypt from 'bcrypt'
 import {db} from '../../DB/connection.js';
 import { login_query, signup_query, forgotPassword_query } from './queries.js';
 
+
+db.getConnection()
+  .then(() => {
+  console.log('Connected to user database');
+
 // Middleware for session management
 userRouter.use(session({
   secret: 'your-secret-key', // Change this to a secret key
@@ -87,5 +92,10 @@ userRouter.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+  })
+  .catch((error) => {
+    console.log('Cannot connect to Database: Connection Service failed');
+    
+  });
 
 export default userRouter;
