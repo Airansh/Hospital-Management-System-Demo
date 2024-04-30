@@ -7,7 +7,7 @@ import mysql from 'mysql2/promise';
 // HOSTING LAYER: LOCALHOST
 const host = 'localhost';
 const user = 'root';
-const password = '1515';
+const password = 'password';
 const database = 'softwarearchitecture';
 
 export const db = mysql.createPool({
