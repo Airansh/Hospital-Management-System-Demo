@@ -1,12 +1,12 @@
 
-import { render, fireEvent, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect'; // for additional matchers like toBeInTheDocument
+import { fireEvent, screen } from '@testing-library/react';
+import { renderWithRouter } from '../../../../test-utils/renderWithRouter';
 import ForgotPassword from '../../ForgotPassword';
 
 describe('ForgotPassword Component', () => {
   beforeEach(() => {
     // eslint-disable-next-line testing-library/no-render-in-setup
-    render(<ForgotPassword />);
+    renderWithRouter(<ForgotPassword />, { route: '/forgotpassword' });
   });
 
   it('renders without crashing', () => {

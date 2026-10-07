@@ -1,20 +1,21 @@
-import express, { urlencoded, json } from 'express';
-import {router} from './apiRoutes/index.js';
-import cors from 'cors'
+// Entry point: starts the API (data) server.
 
-const PORT = process.env.PORT || 3001;
-const app = express();
+import config from './src/config/index.js';
+import { createApp } from './src/app.js';
+import { db, pingDatabase } from './src/db/connection.js';
 
-app.use(urlencoded({ extended: false }));
-app.use(json());
-app.use(cors())
+const app = createApp();
 
-app.use('/api', router);
-
-app.use((req, res) => {
-  res.status(404).end();
+const server = app.listen(config.port, () => {
+  console.log(`API server running on http://localhost:${config.port}/api`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+pingDatabase()
+  .then(() => console.log(`Connected to MySQL database "${config.db.database}"`))
+  .catch((error) => console.error(`Cannot connect to database (${error.code || error.message}); requests will fail until it is reachable`));
+
+const shutdown = () => {
+  server.close(() => db.end().finally(() => process.exit(0)));
+};
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);

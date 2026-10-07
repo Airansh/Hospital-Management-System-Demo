@@ -1,33 +1,29 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/auth.css";
+import PasswordInput from "../PasswordInput";
 import { resetPassword } from "../../../api/auth";
 
 function ForgotPassword() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [ans1, setAns1] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handleAnswerChange = (e) => setAns1(e.target.value);
-  const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
-  const handleTogglePassword = () => setShowPassword(!showPassword);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    // ERROR HANDLING LAYER : wrong email or security answer
     try {
-      const forgot = await resetPassword(email, ans1, newPassword);
-      if (forgot['message'] === 'Password reset successful'){
-        alert('Password Reset Successfull')
-        window.location.href = '/login';
-      } else {
-        alert('Wrong Email id or Security Answer!')
-        console.log(forgot);
-      }
-
-      // Redirect or show success message
+      await resetPassword(email, ans1, newPassword);
+      alert("Password reset successful");
+      navigate("/login");
     } catch (error) {
-      alert('Error resetting password:', error);
-      // Handle error - Redirect or show error message
+      // MESSAGE LAYER
+      alert(error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -39,35 +35,21 @@ function ForgotPassword() {
       <form className="login-form" onSubmit={handleSubmit}>
         <label>
           Email:
-          <input type="email" value={email} onChange={handleEmailChange} required />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <br />
         <label>
           What is the year you were born in?
-          <input value={ans1} onChange={handleAnswerChange} required />
+          <input value={ans1} onChange={(e) => setAns1(e.target.value)} required />
         </label>
         <br />
-        <label className="password-label">
-          New Password:
-          <div className="password-input-container">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={newPassword}
-              onChange={handleNewPasswordChange}
-              required
-            />
-            <div className="toggle-password" onClick={handleTogglePassword}>
-              {showPassword ? "Hide" : "Show"}
-            </div>
-          </div>
-        </label>
+        <PasswordInput label="New Password:" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
         <br />
-        <button type="submit">Update Password</button>
+        <button type="submit" disabled={submitting}>Update Password</button>
       </form>
       <div className="signup-link">
         <p>
-          Remembered your password?{" "}
-          <a className="redirect" type="button" href="login">Login</a>
+          Remembered your password? <Link className="redirect" to="/login">Login</Link>
         </p>
       </div>
     </>

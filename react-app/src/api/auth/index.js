@@ -1,65 +1,11 @@
-const apiUrl = 'http://localhost:3001/api'
+// DATA ACCESS (client side): authentication calls to the API server.
+import { postJson } from '../client';
 
-export const loginUser = async (username, password) => {
-  const loginUrl = `${apiUrl}/login`;
+export const loginUser = (username, password) =>
+  postJson('/login', { username, password });
 
-  try {
-    const response = await fetch(loginUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+export const createAccount = ({ email, password, securityAns1 }) =>
+  postJson('/signup', { username: email, email_id: email, password, security_ans1: securityAns1 });
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error:', error);
-    alert(error + ' :Server is currently down.')
-    throw new Error('Login failed');
-  }
-
-};
-
-export const createAccount = async (userData) => {
-  const signupUrl = `${apiUrl}/signup`;
-
-  try {
-    const response = await fetch(signupUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error:', error);
-    alert(error + ' :Server is currently down')
-    throw new Error('Signup failed');
-  }
-};
-
-export const resetPassword = async (username, ans1, newPassword) => {
-  const resetPasswordUrl = `${apiUrl}/reset-password`;
-
-  try {
-    const response = await fetch(resetPasswordUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, ans1, newPassword }),
-    });
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error:', error);
-    alert(error + ' :Server is currently down')
-    throw new Error('Password reset failed');
-  }
-};
+export const resetPassword = (username, ans1, newPassword) =>
+  postJson('/reset-password', { username, ans1, newPassword });

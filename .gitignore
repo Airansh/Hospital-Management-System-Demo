@@ -1,2 +1,17 @@
+# Dependencies
+node_modules/
 
-DB/connection.js
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

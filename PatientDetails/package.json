@@ -1,15 +1,16 @@
 {
-  "name": "patientdetails",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "patientdetails-facade",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Facade server that fronts the HMS API server for patient lookups",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
   },
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "axios": "^1.6.8",
     "express": "^4.19.2"
   }
 }
