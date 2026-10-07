@@ -1,47 +1,30 @@
 import { useState } from "react";
-import "./styles/loginStyles.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/auth.css";
+import PasswordInput from "../PasswordInput";
 import { loginUser } from "../../../api/auth";
+import { homeForRole, saveSession } from "../../../authentication_rules/session";
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // ERROR HANDLING LAYER : Wrong email and/or password
+    setSubmitting(true);
+    // ERROR HANDLING LAYER : wrong email and/or password, or server down
     try {
-      const loginData = await loginUser(email, password);
-      
-      if (loginData.message === "Invalid username or password") {
-      
-        // MESSAGE LAYER
-      
-        alert("Invalid username or password");
-      } else {
-        sessionStorage.setItem('isLoggedIn', true)
-        sessionStorage.setItem('role',loginData.user.role)
-        if(loginData.user.role === 'patient') {
-          window.location.href = '/patient';
-        }  
-      }
+      const { user } = await loginUser(email, password);
+      saveSession(user);
+      // BUSINESS RULES LAYER : each role lands on its own dashboard
+      navigate(homeForRole(user.role), { replace: true });
     } catch (error) {
-      alert(error)
-      console.log(error);
+      // MESSAGE LAYER
+      alert(error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -53,40 +36,19 @@ function Login() {
       <form className="login-form" onSubmit={handleSubmit}>
         <label>
           Email:
-          <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <br />
-        <label className="password-label">
-          Password:
-          <div className="password-input-container">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-            <div className="toggle-password" onClick={handleTogglePassword}>
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </div>
-          </div>
-        </label>
+        <PasswordInput label="Password:" value={password} onChange={(e) => setPassword(e.target.value)} />
         <br />
         <div className="button-container">
-          <button type="submit">Login</button>
-          <a className="redirect" type="button" href="/forgotpassword">
-            Forgot Password
-          </a>
+          <button type="submit" disabled={submitting}>Login</button>
+          <Link className="redirect" to="/forgotpassword">Forgot Password</Link>
         </div>
       </form>
       <div className="signup-link">
         <p>
-          Don't have an account?{" "}
-          <a className="redirect" type="button" href="signup">Sign up</a>
+          Don't have an account? <Link className="redirect" to="/signup">Sign up</Link>
         </p>
       </div>
     </>

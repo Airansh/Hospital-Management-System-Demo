@@ -1,52 +1,28 @@
 import { useState } from "react";
-import "./styles/signupStyles.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/auth.css";
+import PasswordInput from "../PasswordInput";
 import { createAccount } from "../../../api/auth";
 
 function SignUp() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [ans1, setAns1] = useState('')
-  const [ans2, setAns2] = useState('')
+  const [securityAns1, setSecurityAns1] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-  const handleQuestion1Change = (e) => {
-    setAns1(e.target.value)
-  }
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData ={
-        username: email,
-        password: password,
-        role: 'patient',
-        email_id: email,
-        security_ans1: ans1,
-        security_ans2: ans2
-    }
+    setSubmitting(true);
+    // The server decides the role; self sign-up always creates a patient account.
     try {
-        const createAccountData = await createAccount(userData)
-        //handle signup
-        if (createAccountData['message'] === 'Internal server error') {
-          alert('User already exisits or server error')
-        } else {
-          console.log(createAccountData)
-          alert('Account created successfully')
-          window.location.href = '/login';
-        }
-    } catch(error){
-        console.log(error)
-        alert(error)
+      await createAccount({ email, password, securityAns1 });
+      alert("Account created successfully");
+      navigate("/login");
+    } catch (error) {
+      alert(error.status === 409 ? "User already exists" : error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -58,44 +34,21 @@ function SignUp() {
       <form className="login-form" onSubmit={handleSubmit}>
         <label>
           Email:
-          <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <br />
         <label>
           What year were you born in?
-          <input
-            value={ans1}
-            onChange={handleQuestion1Change}
-            required
-          />
-        </label>
-        <br/>
-        <label className="password-label">
-          Password:
-          <div className="password-input-container">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-            <div className="toggle-password" onClick={handleTogglePassword}>
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </div>
-          </div>
+          <input value={securityAns1} onChange={(e) => setSecurityAns1(e.target.value)} required />
         </label>
         <br />
-        <button type="submit">Create Account</button>
+        <PasswordInput label="Password:" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <br />
+        <button type="submit" disabled={submitting}>Create Account</button>
       </form>
       <div className="signup-link">
         <p>
-          Already Have an Account?{" "}
-          <a className="redirect" type='button' href="login">Login</a>
+          Already Have an Account? <Link className="redirect" to="/login">Login</Link>
         </p>
       </div>
     </>

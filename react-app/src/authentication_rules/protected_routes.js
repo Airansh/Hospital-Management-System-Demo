@@ -1,22 +1,14 @@
-// BUSINESS RULES LAYER
+// BUSINESS RULES + SECURITY LAYER: only render a page for the roles allowed to see it.
 
-import { useEffect } from 'react';
-import { useNavigate, Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { getSession } from './session';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const isAuthenticated = sessionStorage.getItem('isLoggedIn'); 
-
-// SECURITY LAYER : access as per role of user
-  const userRole = sessionStorage.getItem('role');
-  const navigate= useNavigate()
-
-  useEffect(() => {
-    if (!isAuthenticated || !allowedRoles.includes(userRole)) {
-      navigate('/login'); // Redirect to login if not authenticated or role not allowed
-    }
-  });
-
-  return isAuthenticated && allowedRoles.includes(userRole) ? children : <Navigate to="/login" replace />;
+  const { isLoggedIn, role } = getSession();
+  if (!isLoggedIn || !allowedRoles.includes(role)) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
 };
 
 export default ProtectedRoute;

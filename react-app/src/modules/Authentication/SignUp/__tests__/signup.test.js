@@ -1,11 +1,11 @@
-import { render, fireEvent, screen } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { fireEvent, screen } from '@testing-library/react';
+import { renderWithRouter } from '../../../../test-utils/renderWithRouter';
 import SignUp from '../index';
 
 describe('SignUp Component', () => {
   beforeEach(() => {
     // eslint-disable-next-line testing-library/no-render-in-setup
-    render(<SignUp />);
+    renderWithRouter(<SignUp />, { route: '/signup' });
   });
 
   it('renders without crashing', () => {
@@ -55,4 +55,26 @@ describe('SignUp Component', () => {
     expect(passwordInput.value).toBe('testPassword');
   });
 
+});
+
+describe('SignUp behaviour', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('does not let the client choose a role', async () => {
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const fetchMock = jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ message: 'Signup successful' }),
+    });
+    renderWithRouter(<SignUp />, { route: '/signup' });
+    fireEvent.change(screen.getByLabelText('Email:'), { target: { value: 'n@x.com' } });
+    fireEvent.change(screen.getByLabelText('What year were you born in?'), { target: { value: '1999' } });
+    fireEvent.change(screen.getByLabelText('Password:'), { target: { value: 'pw' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create Account' }));
+
+    expect(await screen.findByText('Login Page')).toBeInTheDocument();
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body).toEqual({ username: 'n@x.com', email_id: 'n@x.com', password: 'pw', security_ans1: '1999' });
+  });
 });
